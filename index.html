@@ -600,25 +600,51 @@
     </div>
   </header>
 
-  <!-- CHART -->
-  <div class="chart-container">
-    <div class="chart-header">
-      <span class="chart-title">XAU/USD — TIEMPO REAL</span>
-      <div>
-        <span class="chart-price" id="livePrice">$4,328.48</span>
-        <span class="chart-change">▲ +1.2%</span>
+  <!-- CHARTS -->
+  <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:50px;">
+
+    <!-- XAU/USD -->
+    <div class="chart-container" style="margin-bottom:0">
+      <div class="chart-header">
+        <span class="chart-title">XAU/USD — TIEMPO REAL</span>
+        <div style="text-align:right">
+          <span class="chart-price" id="livePrice" style="font-size:22px">$4,328.48</span>
+          <span class="chart-change" id="xauChange" style="font-size:14px">▲ +0.00%</span>
+        </div>
       </div>
+      <svg class="chart" viewBox="0 0 800 120" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00ff88" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path id="chartArea" fill="url(#chartGrad)"/>
+        <path id="chartLine" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
     </div>
-    <svg class="chart" viewBox="0 0 800 120" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#00ff88" stop-opacity="0.3"/>
-          <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <path id="chartArea" fill="url(#chartGrad)"/>
-      <path id="chartLine" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>
+
+    <!-- BTC/USD -->
+    <div class="chart-container" style="margin-bottom:0">
+      <div class="chart-header">
+        <span class="chart-title">BTC/USD — TIEMPO REAL</span>
+        <div style="text-align:right">
+          <span class="chart-price" id="btcPrice" style="font-size:22px">Cargando...</span>
+          <span class="chart-change" id="btcChange" style="font-size:14px">▲ +0.00%</span>
+        </div>
+      </div>
+      <svg class="chart" viewBox="0 0 800 120" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGradBtc" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#00f5ff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path id="chartAreaBtc" fill="url(#chartGradBtc)"/>
+        <path id="chartLineBtc" fill="none" stroke="#00f5ff" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
   </div>
 
   <!-- BENEFITS -->
@@ -784,6 +810,38 @@
     </div>
   </div>
 
+  <!-- AVISO DE RESPONSABILIDAD -->
+  <div style="
+    background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(0,255,136,0.05));
+    border: 2px solid rgba(0,245,255,0.3);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #00f5ff, #00ff88);
+    "></div>
+    <div style="font-size: 22px; margin-bottom: 12px;">⚠️</div>
+    <p style="
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: #00f5ff;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    ">Aviso Importante</p>
+    <p style="
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.6;
+    ">Operar con Responsabilidad.<br>Se recomienda operar controlando sus <span style="color:#00ff88">TP</span> y <span style="color:#ff6b6b">SL</span>.</p>
+  </div>
+
   <footer>
     <p>© 2026 Señales VIP BTC/XAU Chile · Todos los derechos reservados</p>
     <p style="margin-top:8px">⚠️ Trading implica riesgo. Opera solo con capital que puedas permitirte perder.</p>
@@ -815,8 +873,8 @@ for(let i = 0; i < 30; i++) {
   container.appendChild(p);
 }
 
-// CHART
-function generateChart() {
+// CHART GENERATOR
+function generateChart(lineId, areaId) {
   const points = [];
   let y = 80;
   for(let x = 0; x <= 800; x += 20) {
@@ -825,11 +883,13 @@ function generateChart() {
   }
   const line = points.map((p,i) => (i===0?'M':'L') + p[0] + ',' + p[1]).join(' ');
   const area = line + ' L800,120 L0,120 Z';
-  document.getElementById('chartLine').setAttribute('d', line);
-  document.getElementById('chartArea').setAttribute('d', area);
+  document.getElementById(lineId).setAttribute('d', line);
+  document.getElementById(areaId).setAttribute('d', area);
 }
-generateChart();
-setInterval(generateChart, 3000);
+generateChart('chartLine', 'chartArea');
+generateChart('chartLineBtc', 'chartAreaBtc');
+setInterval(() => generateChart('chartLine', 'chartArea'), 3000);
+setInterval(() => generateChart('chartLineBtc', 'chartAreaBtc'), 3500);
 
 // LIVE XAU/USD PRICE - API REAL
 let xauPrice = 3312;
@@ -872,6 +932,28 @@ async function fetchXAUPrice() {
 }
 fetchXAUPrice();
 setInterval(fetchXAUPrice, 15000);
+
+// BTC PRICE
+let btcPricePrev = 0;
+async function fetchBTCPrice() {
+  try {
+    const r = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+    const d = await r.json();
+    const newPrice = parseFloat(d.data.amount);
+    const diff = btcPricePrev > 0 ? newPrice - btcPricePrev : 0;
+    const pct = btcPricePrev > 0 ? (diff / btcPricePrev * 100).toFixed(2) : '0.00';
+    btcPricePrev = newPrice;
+    const isUp = diff >= 0;
+    document.getElementById('btcPrice').textContent = '$' + newPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    const changeEl = document.getElementById('btcChange');
+    changeEl.textContent = (isUp ? '▲ +' : '▼ ') + Math.abs(pct) + '%';
+    changeEl.style.color = isUp ? '#00f5ff' : '#ff6b6b';
+  } catch(e) {
+    document.getElementById('btcPrice').textContent = 'N/D';
+  }
+}
+fetchBTCPrice();
+setInterval(fetchBTCPrice, 12000);
 
 // COUNTERS
 function animateCounter(id, target, suffix='') {
